@@ -87,7 +87,7 @@ flowchart TB
     end
 
     subgraph BackendLayer["Serverless REST API (Node.js & Express 5)"]
-        API["Express 5 Gateway\n(sl-back-sigma.vercel.app)"]
+        API["Express 5 Gateway\n(Serverless Backend API)"]
         Security["Security Middleware\n(Helmet, Dynamic CORS, Rate Limiters)"]
         Passport["Passport JWT Strategy\n(24h Bearer Tokens)"]
         PDFGen["PDFKit Engine\n(In-Memory Vector Receipts)"]
@@ -103,7 +103,7 @@ flowchart TB
 
     subgraph ExternalServices["External Cloud Services"]
         Stripe["Stripe Payments Cloud\n(Hosted Checkout & Webhooks)"]
-        SMTP["Gmail SMTP Server\n(direction@solutionslangues.com)"]
+        SMTP["SMTP Email Server\n(Transactional Service)"]
     end
 
     ClientLayer -->|"HTTPS REST Requests"| VercelEdge
@@ -156,7 +156,7 @@ sequenceDiagram
         Server->>DB: Upsert Order record (paymentStatus: 'succeeded')
         Server->>Server: Generate PDF Receipt via PDFKit (In-Memory Buffer)
         Server->>SMTP: Send Receipt PDF to Candidate
-        Server->>SMTP: Send Alert & Receipt PDF to Management (direction@solutionslangues.com)
+        Server->>SMTP: Send Alert & Receipt PDF to School Administration
     end
 ```
 
@@ -209,13 +209,13 @@ sequenceDiagram
 | **Nodemon** | `^3.1.11` | Developer tool that monitors file changes and restarts the backend process automatically. |
 
 ### Database & Storage
-- **MongoDB Atlas**: Managed multi-region cloud database cluster (`cluster0.3aecon3.mongodb.net`).
+- **MongoDB Atlas**: Managed multi-region cloud database cluster.
   - Collections: `users`, `orders`, `examdates`.
   - Native unique compound indexes on `{ examType: 1, date: 1 }` to prevent scheduling collisions.
 
 ### Third-Party Services & Integrations
 - **Stripe Payments**: Hosted Checkout and webhook events with HMAC-SHA256 signature verification.
-- **Google Workspace / Gmail SMTP**: Secure App Password transport (`direction@solutionslangues.com`).
+- **Google Workspace / SMTP**: Secure App Password transport for transactional notifications.
 - **Prerender.io**: Dynamic rendering proxy intercepting bots and web crawlers.
 
 ---
@@ -440,7 +440,7 @@ flowchart TD
 
 4. **Dual Email Notification**:
    - **Candidate**: Receives a personalized confirmation email with order breakdown and the generated PDF receipt attached.
-   - **School Management (`direction@solutionslangues.com`)**: Receives an instant transaction advisory containing candidate identification, exam selected, total revenue, and the identical PDF receipt.
+   - **School Administration**: Receives an instant transaction advisory containing candidate identification, exam selected, total revenue, and the identical PDF receipt.
 
 ---
 
@@ -639,19 +639,19 @@ Trilingual localization powered by `i18next` and `react-i18next`:
 | Variable | Description | Example / Format |
 | :--- | :--- | :--- |
 | `PORT` | Local HTTP port for Express | `5000` |
-| `DB_URI` | MongoDB Atlas connection string | `mongodb+srv://<user>:<password>@cluster0...` |
+| `DB_URI` | MongoDB Atlas connection string | `mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<database>?retryWrites=true&w=majority` |
 | `SK` | Secret key used to sign and verify JWT tokens | High-entropy string (e.g., `SecretKey2026!`) |
-| `EMAIL_USER` | Official SMTP email sender | `direction@solutionslangues.com` |
-| `EMAIL_PASS` | Gmail App Password (16 characters) | `xxxx xxxx xxxx xxxx` |
-| `STRIPE_SECRET_KEY` | Stripe Secret API key | `sk_live_...` or `sk_test_...` |
-| `STRIPE_WEBHOOK_SECRET`| Stripe Webhook signing secret | `whsec_...` |
-| `FRONTEND_URL` | Base URL of frontend for checkout redirects | `https://solutionslangues.com` or `http://localhost:3000` |
+| `EMAIL_USER` | Official SMTP email sender | `your_email@example.com` |
+| `EMAIL_PASS` | SMTP App Password (16 characters) | `xxxx xxxx xxxx xxxx` |
+| `STRIPE_SECRET_KEY` | Stripe Secret API key | `sk_test_your_secret_key` |
+| `STRIPE_WEBHOOK_SECRET`| Stripe Webhook signing secret | `whsec_your_webhook_secret` |
+| `FRONTEND_URL` | Base URL of frontend for checkout redirects | `http://localhost:3000` |
 
 ### Frontend (`client/.env`)
 | Variable | Description | Example / Format |
 | :--- | :--- | :--- |
-| `REACT_APP_API_URL` | Base HTTP URL of the backend API | `https://sl-back-sigma.vercel.app` or `http://localhost:5000` |
-| `REACT_APP_STRIPE_PUBLISHABLE_KEY` | Stripe Publishable API Key | `pk_live_...` or `pk_test_...` |
+| `REACT_APP_API_URL` | Base HTTP URL of the backend API | `https://your-backend-api.vercel.app` or `http://localhost:5000` |
+| `REACT_APP_STRIPE_PUBLISHABLE_KEY` | Stripe Publishable API Key | `pk_test_your_publishable_key` |
 
 ---
 
@@ -703,7 +703,7 @@ graph LR
     subgraph VercelCloud["Vercel Cloud Infrastructure"]
         StaticFrontend["Frontend Static Hosting\n• React 19 Production Build\n• Pre-rendered HTML (react-snap)\n• Asset Caching (Global CDN)"]
         RewriteEngine["Edge Rewrite Engine\n• User-Agent Detection"]
-        ServerlessAPI["Serverless Function Runtime\n• sl-back-sigma.vercel.app\n• Node.js Express 5 Engine\n• vercel.json -> index.js"]
+        ServerlessAPI["Serverless Function Runtime\n• Express 5 REST API Engine\n• vercel.json -> index.js"]
         
         VercelDNS --> StaticFrontend
         StaticFrontend --> RewriteEngine
@@ -714,7 +714,7 @@ graph LR
     subgraph ExternalCloud["Cloud Services & Databases"]
         MongoCluster[("MongoDB Atlas Cloud\n(Replica Set)")]
         StripeCloud["Stripe Payments Cloud"]
-        GmailSMTP["Google Workspace SMTP\n(direction@solutionslangues.com)"]
+        GmailSMTP["SMTP Email Transport\n(Transactional Service)"]
         
         ServerlessAPI <-->|"Mongoose Connection Pool"| MongoCluster
         ServerlessAPI <-->|"Stripe SDK & Webhooks"| StripeCloud
@@ -724,9 +724,9 @@ graph LR
 
 The system is deployed on the **Vercel Cloud Platform**:
 - **Frontend**: Hosted with automatic CI/CD from the repository branch with custom domain assignment (`solutionslangues.com`).
-- **Backend API**: Hosted as a Serverless Node.js Function (`sl-back-sigma.vercel.app`) using `server/vercel.json`.
+- **Backend API**: Hosted as a Serverless Node.js Function using `server/vercel.json`.
 - **Database**: High-availability MongoDB Atlas cloud cluster.
-- **Payment Processing**: Stripe Cloud with Webhook listener at `https://sl-back-sigma.vercel.app/payment/webhook`.
+- **Payment Processing**: Stripe Cloud with Webhook listener at `https://<backend-app>.vercel.app/payment/webhook`.
 
 ---
 
@@ -750,5 +750,5 @@ The system is deployed on the **Vercel Cloud Platform**:
 - **Platform Architect & Developer**: Amira Zidi
 - **Owner & Examination Center**: Solutions Langues Québec ([solutionslangues.com](https://solutionslangues.com))
 - **Headquarters**: Québec, Canada
-- **Support**: `contact@solutionslangues.com` | `direction@solutionslangues.com`
+- **Support**: `contact@solutionslangues.com`
 - **Copyright**: © 2026 Solutions Langues. All rights reserved.

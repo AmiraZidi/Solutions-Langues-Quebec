@@ -125,55 +125,6 @@ Solution Languages System/
 
 ---
 
-## 🚀 Getting Started Locally
-
-### 1. Prerequisites
-- **Node.js** `>= 18.x`
-- **npm** `>= 9.x`
-- A free or existing **MongoDB Atlas** database URI
-- A **Stripe** account for test payments
-
-### 2. Backend Setup
-```bash
-cd server
-npm install
-```
-Create `server/.env`:
-```env
-PORT=5000
-DB_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<database>?retryWrites=true&w=majority
-SK=your_jwt_secret_key
-EMAIL_USER=your_email@example.com
-EMAIL_PASS=your_smtp_app_password
-STRIPE_SECRET_KEY=sk_test_your_secret_key_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-FRONTEND_URL=http://localhost:3000
-```
-Start the server:
-```bash
-npm start
-# Server active on http://localhost:5000
-```
-
-### 3. Frontend Setup
-In a new terminal:
-```bash
-cd client
-npm install
-```
-Create `client/.env`:
-```env
-REACT_APP_API_URL=http://localhost:5000
-REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
-```
-Start the client:
-```bash
-npm start
-# Client running at http://localhost:3000
-```
-
----
-
 ## 🛡️ Security Architecture
 
 1. **Authentication**: Bcrypt-hashed credentials + email-delivered 6-digit OTP code (5-minute expiry).

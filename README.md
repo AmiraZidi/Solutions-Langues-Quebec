@@ -60,13 +60,13 @@ flowchart TB
     subgraph Vercel["Vercel Cloud Platform"]
         Edge["Vercel Global Edge & Anycast DNS"]
         StaticCDN["Static Bundle CDN\n(react-snap Prerendered HTML)"]
-        ServerlessAPI["Express 5 REST API Engine\nsl-back-sigma.vercel.app"]
+        ServerlessAPI["Express 5 REST API Engine\n(Serverless Backend API)"]
     end
 
     subgraph Integrations["Cloud Services & Database"]
         DB[("MongoDB Atlas Cloud\n(users, orders, examdates)")]
         Stripe["Stripe Payments Cloud\n(Hosted Checkout & Webhooks)"]
-        SMTP["Gmail SMTP Transport\n(direction@solutionslangues.com)"]
+        SMTP["SMTP Email Transport\n(Transactional Notifications)"]
     end
 
     Client -->|"HTTPS Web Traffic"| Edge
@@ -120,8 +120,8 @@ Solution Languages System/
 | **Frontend** | React 19, Redux Toolkit, React Router v6, Bootstrap 5, React-Bootstrap, Framer Motion, Axios, i18next, React-Helmet-Async, SweetAlert2, jsPDF, XLSX |
 | **Backend** | Node.js, Express 5, Mongoose 9, Passport.js, Passport-JWT, Bcrypt, Stripe SDK, PDFKit, Nodemailer, Helmet, Express-Rate-Limit, Express-Validator |
 | **Database** | MongoDB Atlas (Multi-region Cloud Cluster) |
-| **Integrations** | Stripe Hosted Checkout & Webhooks, Google Workspace SMTP (direction@solutionslangues.com), Prerender.io |
-| **Deployment** | Vercel Serverless Functions (`sl-back-sigma.vercel.app`) + Vercel Static Frontend (`solutionslangues.com`) |
+| **Integrations** | Stripe Hosted Checkout & Webhooks, Google Workspace / SMTP, Prerender.io |
+| **Deployment** | Vercel Serverless Functions (REST API) + Vercel Static Frontend (Custom Domain) |
 
 ---
 
@@ -141,12 +141,12 @@ npm install
 Create `server/.env`:
 ```env
 PORT=5000
-DB_URI=your_mongodb_connection_string
+DB_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<database>?retryWrites=true&w=majority
 SK=your_jwt_secret_key
-EMAIL_USER=direction@solutionslangues.com
-EMAIL_PASS=your_gmail_app_password
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_smtp_app_password
+STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 FRONTEND_URL=http://localhost:3000
 ```
 Start the server:
@@ -164,7 +164,7 @@ npm install
 Create `client/.env`:
 ```env
 REACT_APP_API_URL=http://localhost:5000
-REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_...
+REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
 ```
 Start the client:
 ```bash

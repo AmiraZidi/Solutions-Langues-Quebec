@@ -655,43 +655,6 @@ Trilingual localization powered by `i18next` and `react-i18next`:
 
 ---
 
-## 7. Installation, Local Development & Scripts
-
-### Prerequisites
-- **Node.js**: Version 18.x or 20.x LTS installed.
-- **npm**: Version 9.x or higher.
-- **MongoDB**: Access to MongoDB Atlas cloud database or local MongoDB instance.
-- **Stripe Account**: For test keys and webhook forwarding.
-
-### 1. Repository Setup & Backend Launch
-```bash
-# Navigate to backend directory
-cd server
-
-# Install dependencies
-npm install
-
-# Start backend development server (with nodemon)
-npm start
-# -> Server running on port 5000
-# -> Database connected
-```
-
-### 2. Frontend Launch
-```bash
-# Navigate to client directory in a new terminal
-cd client
-
-# Install dependencies
-npm install
-
-# Start frontend development server
-npm start
-# -> Local development server active at http://localhost:3000
-```
-
----
-
 ## 8. Production Deployment Architecture
 
 ```mermaid
